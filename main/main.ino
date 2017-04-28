@@ -1,12 +1,22 @@
 // pin constants go here
-const int pwm1 = 10; // left wheel
-const int dir1 = 11;
-const int pwm2 = 9;  // right wheel
-const int dir2 = 12;
+const int LED = 13; // led on teensy
+
+const int LW_PWM = 5; // left wheel
+const int LW_DIR = 6;
+const int RW_PWM = 9;  // right wheel
+const int RW_DIR = 10;
+
+const int L_OUT = A19;
+const int L_IN1 = A19;
+const int L_IN2 = A20;
+const int L_IN3 = A21;
+const int L_IN4S = A22;
+
 
 // setup functions here
 void setup() {
   // put your setup code here, to run once:
+  teensy_led(true);
   motor_controller_setup();
 }
 
@@ -23,4 +33,8 @@ void loop() {
   delay(1000);
   stop_moving();
   delay(1000);
+
+  run_laser();
 }
+
+

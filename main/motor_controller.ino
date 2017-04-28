@@ -1,43 +1,43 @@
 // motor controller functions defined here
 
 void motor_controller_setup() {
-  pinMode(pwm1, OUTPUT);
-  pinMode(dir1, OUTPUT);
-  pinMode(pwm2, OUTPUT);
-  pinMode(dir2, OUTPUT);
+  pinMode(LW_PWM, OUTPUT);
+  pinMode(RW_DIR, OUTPUT);
+  pinMode(RW_PWM, OUTPUT);
+  pinMode(LW_DIR, OUTPUT);
 }
 
 void drive_forward() {
-  analogWrite(pwm1, 255);
-  digitalWrite(dir1, HIGH);
-  analogWrite(pwm2, 255);
-  digitalWrite(dir2, HIGH);
+  analogWrite(LW_PWM, 255);
+  digitalWrite(RW_DIR, HIGH);
+  analogWrite(RW_PWM, 255);
+  digitalWrite(LW_DIR, HIGH);
 }
 
 void drive_backward() {
-  analogWrite(pwm1,255);
-  digitalWrite(dir1,LOW);
-  analogWrite(pwm2,255);
-  digitalWrite(dir2,LOW);
+  analogWrite(LW_PWM,255);
+  digitalWrite(RW_DIR,LOW);
+  analogWrite(RW_PWM,255);
+  digitalWrite(LW_DIR,LOW);
 }
 
 void turn_left() {
-  analogWrite(pwm1,255);
-  digitalWrite(dir1,LOW);
-  analogWrite(pwm2,255);
-  digitalWrite(dir2,HIGH);
+  analogWrite(LW_PWM,255);
+  digitalWrite(RW_DIR,LOW);
+  analogWrite(RW_PWM,255);
+  digitalWrite(LW_DIR,HIGH);
 }
 
 void turn_right() {
-  analogWrite(pwm1,255);
-  digitalWrite(dir1,HIGH);
-  analogWrite(pwm2,255);
-  digitalWrite(dir2,LOW);
+  analogWrite(LW_PWM,255);
+  digitalWrite(RW_DIR,HIGH);
+  analogWrite(RW_PWM,255);
+  digitalWrite(LW_DIR,LOW);
 }
 
 void stop_moving() {
-  analogWrite(pwm1,0);
-  digitalWrite(dir1,HIGH);
-  analogWrite(pwm2,0);
-  digitalWrite(dir2,HIGH);
+  analogWrite(LW_PWM,0);
+  digitalWrite(RW_DIR,HIGH);
+  analogWrite(RW_PWM,0);
+  digitalWrite(LW_DIR,HIGH);
 }
