@@ -6,11 +6,11 @@ const int LW_DIR = 6;
 const int RW_PWM = 9;  // right wheel
 const int RW_DIR = 10;
 
-const int L_OUT = A19;
+const int L_OUT = A18;
 const int L_IN1 = A19;
 const int L_IN2 = A20;
 const int L_IN3 = A21;
-const int L_IN4S = A22;
+const int L_IN4 = A22;
 
 
 // setup functions here
