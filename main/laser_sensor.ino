@@ -1,13 +1,20 @@
 // laser sensor functions defined here
 int laserState;
-long previousMillis;
-long interval_;
+unsigned long previousMillis;
+unsigned long interval_;
+int laserThreshold;
 
 void laser_sensor_setup() {
   pinMode(L_OUT, OUTPUT);
+  pinMode(L_IN1, INPUT);
+  pinMode(L_IN2, INPUT);
+  pinMode(L_IN3, INPUT);
+  pinMode(L_IN4, INPUT);
   previousMillis = 0;
   laserState = LOW;
-  interval_ = 1000000;
+  interval_ = 5;
+  laserThreshold = 50;
+  digitalWrite(L_OUT, 0);
 }
 
 void run_laser() {
@@ -28,3 +35,6 @@ void run_laser() {
   }
 }
 
+boolean check_laser_sensor(int pin) {
+  return analogRead(pin) > laserThreshold;
+}
