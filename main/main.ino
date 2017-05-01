@@ -12,6 +12,15 @@ const int L_IN2 = A20;
 const int L_IN3 = A21;
 const int L_IN4 = A22;
 
+const int U_ECHO1 = A2; // ultrasonic echo (in)
+const int U_TRIG1 = A6; // ultrasonic trigger (out)
+const int U_ECHO2 = A3;
+const int U_TRIG2 = A7;
+const int U_ECHO3 = A4;
+const int U_TRIG3 = A8;
+const int U_ECHO4 = A5;
+const int U_TRIG4 = A9;
+
 boolean stopped;
 
 // setup functions here
@@ -20,6 +29,7 @@ void setup() {
   teensy_led(true);
   motor_controller_setup();
   laser_sensor_setup();
+  ultrasonic_sensor_setup();
   stopped = false;
 }
 
@@ -30,7 +40,8 @@ void loop() {
     drive_forward();
   }
   run_laser();
-  if (check_laser_sensor(L_IN1)) {
+  //if (check_laser_sensor(L_IN1)) {
+  if (check_ultrasonic_sensor()) {
     stop_moving();
     stopped = true;
   }

@@ -11,10 +11,10 @@ void laser_sensor_setup() {
   pinMode(L_IN3, INPUT);
   pinMode(L_IN4, INPUT);
   previousMillis = 0;
-  laserState = LOW;
   interval_ = 5;
   laserThreshold = 50;
-  digitalWrite(L_OUT, 0);
+  laserState = LOW;
+  digitalWrite(L_OUT, laserState);
 }
 
 void run_laser() {
