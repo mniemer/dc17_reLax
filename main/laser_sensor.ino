@@ -46,13 +46,12 @@ boolean check_laser_sensor(int pin) {
 int check_all_laser_sensors() {
   if (check_laser_sensor(L_IN1))
     return L_IN1;
-  else if (check_laser_sensor(L_IN2))
+  if (check_laser_sensor(L_IN2))
     return L_IN2;
-  else if (check_laser_sensor(L_IN3))
+  if (check_laser_sensor(L_IN3))
     return L_IN3;
-  else if (check_laser_sensor(L_IN4))
+  if (check_laser_sensor(L_IN4))
     return L_IN4;
-  else
-    return -1;
+  return -1;
 }
 

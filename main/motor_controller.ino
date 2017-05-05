@@ -28,6 +28,7 @@ boolean drive_to_intersection(int direction, int speed, unsigned long time) {
     // if we've been driving for long enough, stop
     if (currMillis - startMillis > time) { 
       driving = false;
+      //stop_moving();
       return driving;
     }
   }

@@ -46,19 +46,22 @@ void setup() {
   ultrasonic_sensor_setup();
   state = WAITING;
   direction = FORWARD;
+  delay(2000);
 }
 
 // main loop
 void loop() {
-  // put your main code here, to run repeatedly:
+  // put your main code here, to run repeatedly:vc
   run_laser();
 
   switch(state) {
     case DRIVING:
     {
+      teensy_led(true);
       // drive until we get a signal that we've stopped, then switch to centering
       // speed/time arguements will need to be replaced with appropriate values
       if (!drive_to_intersection(direction, 100, 1000)) {
+        stop_moving();
         state = CENTERING;
       }
       break;
@@ -66,11 +69,12 @@ void loop() {
     case CENTERING:
     {
       // run centering routine until finished, then wait
-      teensy_led(false); // doing this for debugging right now
+      teensy_led(true); // doing this for debugging right now
       break;
     }
     case WAITING:
     {
+      teensy_led(false); // if we're stuck in waiting (ie the laser sensor is faulty rn then the led will be off)
       // idle
       // check lasers, if we see adversary then move in appropriate direction
       int result = check_all_laser_sensors();
