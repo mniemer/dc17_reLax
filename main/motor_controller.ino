@@ -22,18 +22,7 @@ boolean drive_to_intersection(int direction, int speed, unsigned long time) {
   if (!driving) {
     startMillis = millis();
     driving = true;
-  }
-  else {
-    unsigned long currMillis = millis();
-    // if we've been driving for long enough, stop
-    if (currMillis - startMillis > time) { 
-      driving = false;
-      //stop_moving();
-      return driving;
-    }
-  }
-  
-  switch(direction) {
+    switch(direction) {
     case FORWARD:
       drive_forward(speed);
       break;
@@ -48,6 +37,14 @@ boolean drive_to_intersection(int direction, int speed, unsigned long time) {
       break;
      default: // shouldn't get here
       stop_moving();
+    }
+  }
+  else {
+    unsigned long currMillis = millis();
+    // if we've been driving for long enough, stop
+    if (currMillis - startMillis > time) { 
+      driving = false;
+    }
   }
   return driving;
 }

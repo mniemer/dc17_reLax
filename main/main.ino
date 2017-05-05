@@ -34,8 +34,15 @@ const int DRIVING = 30; // states
 const int CENTERING = 31;
 const int WAITING = 32;
 
+const int MIN_X = 0;
+const int MAX_X = 4; // I have no idea how wide the grid is
+const int MIN_Y = 0;
+const int MAX_Y = 4; // or how long it is
+
 int state;
 int direction;
+int posx;
+int poxy;
 
 // setup functions here
 void setup() {
@@ -46,7 +53,8 @@ void setup() {
   ultrasonic_sensor_setup();
   state = WAITING;
   direction = FORWARD;
-  delay(2000);
+  posx = 0;
+  posy = 0;
 }
 
 // main loop
@@ -57,9 +65,10 @@ void loop() {
   switch(state) {
     case DRIVING:
     {
-      teensy_led(true);
+      teensy_led(true); // doing this for debugging right now
       // drive until we get a signal that we've stopped, then switch to centering
       // speed/time arguements will need to be replaced with appropriate values
+      // need to update posx and posy before centering
       if (!drive_to_intersection(direction, 100, 1000)) {
         stop_moving();
         state = CENTERING;
@@ -70,6 +79,10 @@ void loop() {
     {
       // run centering routine until finished, then wait
       teensy_led(true); // doing this for debugging right now
+      if (!center_in_intersection()) {
+        stop_moving();
+        state = WAITING;
+      }
       break;
     }
     case WAITING:
@@ -80,6 +93,9 @@ void loop() {
       int result = check_all_laser_sensors();
       if (result != -1) {
         // set direction and switch state to driving
+
+        // TODO: choose the direction based on what laser you read 
+        
         state = DRIVING;
       }
       break;
