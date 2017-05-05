@@ -11,14 +11,21 @@ void ultrasonic_sensor_setup() {
   pinMode(U_TRIG4, OUTPUT);
 }
 
-boolean check_ultrasonic_sensor() {
+boolean check_ultrasonic_sensor(int trigPin, int echoPin) {
   long duration, distance;
-  digitalWrite(U_TRIG1, HIGH);
+  digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
-  digitalWrite(U_TRIG1, LOW);
-;
-  duration = pulseIn(U_ECHO1, HIGH);
+  digitalWrite(trigPin, LOW);
+  
+  duration = pulseIn(echoPin, HIGH);
   distance = (duration/2) / 29.1;
-  return distance < 20;
+  return distance < 20; // this value may/will need to be replaced
+}
+
+// routine to center robot
+// should check ultrasonic sensors one at a time and move appropriately
+// will need to know location in the grid
+boolean center_in_intersection() {
+  return false;
 }
 
