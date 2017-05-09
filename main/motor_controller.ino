@@ -50,12 +50,10 @@ boolean drive_to_intersection(int direction, int speed, unsigned long time) {
 }
 
 // speed: int between 0 and 255
-void drive_forward(int speed) {
+void drive_right(int speed) {
   // stop the other pair of wheels (2 and 4)
   analogWrite(W_PWM2, 0);
-  digitalWrite(W_DIR2, HIGH);
   analogWrite(W_PWM4, 0);
-  digitalWrite(W_DIR4, HIGH);
 
   // make wheels 1 and 3 turn forward
   analogWrite(W_PWM1, speed);
@@ -64,12 +62,10 @@ void drive_forward(int speed) {
   digitalWrite(W_DIR3, HIGH);
 }
 
-void drive_backward(int speed) {
+void drive_left(int speed) {
   // stop the other pair of wheels (2 and 4)
   analogWrite(W_PWM2, 0);
-  digitalWrite(W_DIR2, HIGH);
   analogWrite(W_PWM4, 0);
-  digitalWrite(W_DIR4, HIGH);
 
   // make wheels 1 and 3 turn backward
   analogWrite(W_PWM1, speed);
@@ -79,12 +75,10 @@ void drive_backward(int speed) {
 }
 
 
-void drive_left(int speed) {
+void drive_forward(int speed) {
   // stop the other pair of wheels (1 and 3)
   analogWrite(W_PWM1, 0);
-  digitalWrite(W_DIR1, HIGH);
   analogWrite(W_PWM3, 0);
-  digitalWrite(W_DIR3, HIGH);
 
   // make wheels 2 and 4 turn forward (HIGH/LOW values may need to be swapped)
   analogWrite(W_PWM2, speed);
@@ -94,12 +88,10 @@ void drive_left(int speed) {
 }
 
 
-void drive_right(int speed) {
+void drive_backward(int speed) {
   // stop the other pair of wheels (1 and 3)
   analogWrite(W_PWM1, 0);
-  digitalWrite(W_DIR1, HIGH);
   analogWrite(W_PWM3, 0);
-  digitalWrite(W_DIR3, HIGH);
 
   // make wheels 2 and 4 turn forward (HIGH/LOW values may need to be swapped)
   analogWrite(W_PWM2, speed);

@@ -12,13 +12,15 @@ void laser_sensor_setup() {
   pinMode(L_IN4, INPUT);
   prevMillis = 0;
   interval_ = 5;
-  laserThreshold = 50;
+  laserThreshold = 30;
   laserState = LOW;
   digitalWrite(L_OUT, laserState);
 }
 
 // this will run all the time
 void run_laser() {
+  //analogWriteFrequency(L_OUT, 10);
+  
   unsigned long currMillis = millis();
  
   if(currMillis - prevMillis > interval_) {
@@ -46,12 +48,13 @@ boolean check_laser_sensor(int pin) {
 int check_all_laser_sensors() {
   if (check_laser_sensor(L_IN1))
     return L_IN1;
-  if (check_laser_sensor(L_IN2))
+  else if (check_laser_sensor(L_IN2))
     return L_IN2;
-  if (check_laser_sensor(L_IN3))
+  else if (check_laser_sensor(L_IN3))
     return L_IN3;
-  if (check_laser_sensor(L_IN4))
+  else if (check_laser_sensor(L_IN4))
     return L_IN4;
-  return -1;
+  else
+    return -1;
 }
 

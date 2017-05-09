@@ -11,7 +11,7 @@ void ultrasonic_sensor_setup() {
   pinMode(U_TRIG4, OUTPUT);
 }
 
- check_ultrasonic_sensor(int trigPin, int echoPin) {
+long check_ultrasonic_sensor(int trigPin, int echoPin) {
   digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
@@ -28,6 +28,7 @@ void ultrasonic_sensor_setup() {
 // returns true when done
 boolean center_in_intersection() {
 
+  return false;               
   // TODO: write this
   // we decided that using all four sensors is always fine (on walls and corners too)
   
