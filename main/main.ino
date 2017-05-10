@@ -58,14 +58,14 @@ void setup() {
   laser_sensor_setup();
   ultrasonic_sensor_setup();
   bump_sensor_setup();
-  state = WAITING;
+  state = CENTERING;
   posx = 0;
   posy = 0;
 }
 
 // main loop
 void loop() {
-  // put your main code here, to run repeatedly:vc
+  // put your main code here, to run repeatedly
   run_laser();
   
   if (check_all_bump_sensors() != -1) {
@@ -82,7 +82,7 @@ void loop() {
       // need to update posx and posy before centering
       if (!drive_to_intersection(direction, 80, 3000)) {
         stop_moving();
-        state = WAITING;
+        state = CENTERING;
       }
       break;
     }
