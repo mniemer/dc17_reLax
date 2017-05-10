@@ -25,7 +25,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  /*digitalWrite(dir4, HIGH);
+  digitalWrite(dir4, HIGH);
   digitalWrite(dir3, HIGH);
   digitalWrite(dir2, HIGH);
   digitalWrite(dir1, HIGH);
@@ -41,7 +41,7 @@ void loop() {
   analogWrite(pwm3,0);
   analogWrite(pwm4,100);
   delay(1000);
-  analogWrite(pwm4,0);*/
+  analogWrite(pwm4,0);
   
   /*drive_angle(90, 100); //drive_forward();
   delay(1000);
@@ -60,9 +60,9 @@ void loop() {
   stop_moving();
   delay(2000);*/
 
-  drive_angle(drv, 70);
+  /*drive_angle(drv, 70);
   delay(10);
-  ++drv;
+  ++drv;*/
 }
 
 void drive_angle(double angle, int spd) {
