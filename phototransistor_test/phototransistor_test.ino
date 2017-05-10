@@ -4,7 +4,7 @@ const int L_IN1 = A19; // laser sensor inputs
 const int L_IN2 = A20;
 const int L_IN3 = A21;
 const int L_IN4 = A22;
-const int thresh = 50;
+const int thresh = 40;
 
 // the follow variables is a long because the time, measured in miliseconds,
 // will quickly become a bigger number than can be stored in an int.
@@ -24,14 +24,19 @@ void setup() {
 
   analogWriteFrequency(L_OUT, 10);   // frequency of pin 37 at 10Hz
   analogWrite(L_OUT,128);
+
+  Serial.begin(9600);
 }
 
 void loop() {
-  if ((analogRead(L_IN1) > thresh) || (analogRead(L_IN2) > thresh) || (analogRead(L_IN3) > thresh) || (analogRead(L_IN4) > thresh))
+  if ((analogRead(L_IN1) > thresh) || (analogRead(L_IN2) > thresh) || (analogRead(L_IN3) > thresh) || (analogRead(L_IN4) > thresh)) {
     digitalWrite(LED,HIGH);
-  else
-    digitalWrite(LED,LOW);
-   
+    delay(100);
+  }
+  
+  digitalWrite(LED,LOW);
+
+  Serial.printf("%d %d %d %d\r\n", analogRead(L_IN1), analogRead(L_IN2), analogRead(L_IN3), analogRead(L_IN4));
 }
 
 int send_receive_ultrasonic(int id) {   // inputs 0-3

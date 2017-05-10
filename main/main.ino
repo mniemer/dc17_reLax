@@ -75,7 +75,7 @@ void loop() {
   
   switch(state) {
     case DRIVING:
-    {ok 
+    {
       teensy_led(true); // doing this for debugging right now
       // drive until we get a signal that we've stopped, then switch to centering
       // speed/time arguements will need to be replaced with appropriate values
