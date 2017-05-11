@@ -18,7 +18,6 @@ significant bit) at this FS setting, so the raw reading of
 #include <LSM6.h>
 
 LSM6 imu;
-
 char report[80];
 
 void setup()
@@ -37,7 +36,7 @@ void setup()
 void loop()
 {
   imu.read();
-
+  
   snprintf(report, sizeof(report), "A: %6d %6d %6d    G: %6d %6d %6d",
     imu.a.x, imu.a.y, imu.a.z,
     imu.g.x, imu.g.y, imu.g.z);
