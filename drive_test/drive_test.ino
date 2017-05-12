@@ -1,30 +1,106 @@
-const int pwm1 = 3; // wheel 1 (forward/backward)
-const int dir1 = 4;
-const int pwm2 = 5; // wheel 2 (left/right)
-const int dir2 = 6;
-const int pwm3 = 7; // wheel 3 (forward/backward)
-const int dir3 = 8;
-const int pwm4 = 9; // wheel 4 (left/right)
-const int dir4 = 10;
+const int W_PWM1 = 3; // wheel pwm
+const int W_DIR1 = 4; // wheel dir
+const int W_PWM2 = 5;
+const int W_DIR2 = 6;
+const int W_PWM3 = 7;
+const int W_DIR3 = 8;
+const int W_PWM4 = 9;
+const int W_DIR4 = 10;
 
 // const int spd = 100; // motor speed
 int drv = 0;
 
 void setup() {
   // put your setup code here, to run once:
-  pinMode(pwm1, OUTPUT);
-  pinMode(dir1, OUTPUT);
-  pinMode(pwm2, OUTPUT);
-  pinMode(dir2, OUTPUT);
-  pinMode(pwm3, OUTPUT);
-  pinMode(dir3, OUTPUT);
-  pinMode(pwm4, OUTPUT);
-  pinMode(dir4, OUTPUT);
+  pinMode(W_PWM1, OUTPUT);
+  pinMode(W_DIR1, OUTPUT);
+  pinMode(W_PWM2, OUTPUT);
+  pinMode(W_DIR2, OUTPUT);
+  pinMode(W_PWM3, OUTPUT);
+  pinMode(W_DIR3, OUTPUT);
+  pinMode(W_PWM4, OUTPUT);
+  pinMode(W_DIR4, OUTPUT);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  drive_forward(80);
+  delay(1000);
+  drive_backward(80);
+  delay(1000);
+  drive_right(80);
+  delay(1000);
+  drive_left(80);
+  delay(1000);
+  stop_moving();
 
+}
+
+
+// speed: int between 0 and 255
+void drive_right(int speed) {
+  // stop the other pair of wheels (2 and 4)
+  analogWrite(W_PWM2, 0);
+  analogWrite(W_PWM4, 0);
+
+  // make wheels 1 and 3 turn forward
+  analogWrite(W_PWM1, speed);
+  digitalWrite(W_DIR1, HIGH);
+  analogWrite(W_PWM3, speed);
+  digitalWrite(W_DIR3, HIGH);
+}
+
+void drive_left(int speed) {
+  // stop the other pair of wheels (2 and 4)
+  analogWrite(W_PWM2, 0);
+  analogWrite(W_PWM4, 0);
+
+  // make wheels 1 and 3 turn backward
+  analogWrite(W_PWM1, speed);
+  digitalWrite(W_DIR1, LOW);
+  analogWrite(W_PWM3, speed);
+  digitalWrite(W_DIR3, LOW);
+}
+
+
+void drive_forward(int speed) {
+  // stop the other pair of wheels (1 and 3)
+  analogWrite(W_PWM1, 0);
+  analogWrite(W_PWM3, 0);
+
+  // make wheels 2 and 4 turn forward (HIGH/LOW values may need to be swapped)
+  analogWrite(W_PWM2, speed);
+  digitalWrite(W_DIR2, HIGH);
+  analogWrite(W_PWM4, speed);
+  digitalWrite(W_DIR4, HIGH);
+}
+
+
+void drive_backward(int speed) {
+  // stop the other pair of wheels (1 and 3)
+  analogWrite(W_PWM1, 0);
+  analogWrite(W_PWM3, 0);
+
+  // make wheels 2 and 4 turn forward (HIGH/LOW values may need to be swapped)
+  analogWrite(W_PWM2, speed);
+  digitalWrite(W_DIR2, LOW);
+  analogWrite(W_PWM4, speed);
+  digitalWrite(W_DIR4, LOW);
+}
+
+void stop_moving() {
+  // stop all wheels
+  analogWrite(W_PWM1, 0);
+  digitalWrite(W_DIR1, HIGH);
+  analogWrite(W_PWM2, 0);
+  digitalWrite(W_DIR2, HIGH);
+  analogWrite(W_PWM3, 0);
+  digitalWrite(W_DIR3, HIGH);
+  analogWrite(W_PWM4, 0);
+  digitalWrite(W_DIR4, HIGH);
+}
+
+/*
   digitalWrite(dir4, HIGH);
   digitalWrite(dir3, HIGH);
   digitalWrite(dir2, HIGH);
@@ -62,8 +138,8 @@ void loop() {
 
   /*drive_angle(drv, 70);
   delay(10);
-  ++drv;*/
-}
+  ++drv;
+
 
 void drive_angle(double angle, int spd) {
   angle = (PI/180) * angle;
@@ -133,5 +209,5 @@ void stop_moving() {
   analogWrite(pwm4,0);
   digitalWrite(dir4,HIGH);
 }
-
+*/
 

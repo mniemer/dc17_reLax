@@ -1,3 +1,6 @@
+#include <i2c_t3.h>
+#include <LSM6.h>
+
 // pin constants go here
 const int LED = 13; // led on teensy
 
@@ -39,6 +42,7 @@ const int DRIVING = 30; // states
 const int CENTERING = 31;
 const int WAITING = 32;
 const int BUMPED = 33;
+const int ROTATING = 34;
 
 const int MIN_X = 0;
 const int MAX_X = 4; // I have no idea how wide the grid is
@@ -53,12 +57,13 @@ int posy;
 // setup functions here
 void setup() {
   // put your setup code here, to run once:
-  teensy_led(true);
+  teensy_led(false);
+  imu_sensor_setup();
   motor_controller_setup();
   laser_sensor_setup();
   ultrasonic_sensor_setup();
   bump_sensor_setup();
-  state = CENTERING;
+  state = WAITING;
   posx = 0;
   posy = 0;
 }
@@ -67,8 +72,9 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly
   run_laser();
+  read_imu();
   
-  if (check_all_bump_sensors() != -1) {
+  if (check_all_bump_sensors()) {
     stop_moving();
     state = BUMPED;
   }
@@ -76,50 +82,50 @@ void loop() {
   switch(state) {
     case DRIVING:
     {
-      teensy_led(true); // doing this for debugging right now
       // drive until we get a signal that we've stopped, then switch to centering
       // speed/time arguements will need to be replaced with appropriate values
       // need to update posx and posy before centering
       if (!drive_to_intersection(direction, 80, 3000)) {
         stop_moving();
-        state = CENTERING;
+        state = ROTATING;
       }
       break;
     }
     case CENTERING:
     {
-      // run centering routine until finished, then wait
-      teensy_led(true); // doing this for debugging right now
       if (!center_in_intersection()) {
         stop_moving();
         state = WAITING;
       }
       break;
     }
+    case ROTATING:
+    {
+      if (!adjust_rotation()) {
+        stop_moving();
+        state = CENTERING;
+      }
+      break;
+    }
     case WAITING:
     {
-      teensy_led(false); // if we're stuck in waiting (ie the laser sensor is faulty rn then the led will be off)
       // idle
       // check lasers, if we see adversary then move in appropriate direction
       int result = check_all_laser_sensors();
       if (result != -1) {
-        // set direction and switch state to driving
-
-        // TODO: choose the direction based on what laser you read 
-        
         state = DRIVING;
         switch (result) {
         case L_IN1:
-          direction = BACKWARD;
+          direction = LEFTWARD;
           break;
         case L_IN2:
-          direction = RIGHTWARD;
-          break;
-        case L_IN3:
           direction = FORWARD;
           break;
+        case L_IN3:
+          direction = RIGHTWARD;
+          break;
         case L_IN4:
-          direction = LEFTWARD;
+          direction = BACKWARD;
           break;
         default: // this shouldn't happen
           direction = FORWARD;
@@ -129,8 +135,12 @@ void loop() {
     }
     case BUMPED:
     {
-      // you're stuck here now bitch
       teensy_led(true);
+      if (!retreat_after_bump()) {
+        stop_moving();
+        reset_bump_sensors();
+        state = ROTATING;
+      }
     }
     default: // shouldn't get here
       stop_moving();
