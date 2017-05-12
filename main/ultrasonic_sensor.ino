@@ -28,6 +28,8 @@ int send_receive_ultrasonic(int id) {   // inputs 0-3
   digitalWrite(trig_pin, LOW);
   unsigned long distance = pulseIn(echo_pin, HIGH,8000);
   int cm = distance/58;
+  if (cm == 0)
+    cm = 400;
   return cm;
 }
 

@@ -2,6 +2,7 @@
 // wheels 1 and 3 are parallel, 2 and 4 are parallel
 boolean driving;
 unsigned long startMillis;
+unsigned long driveInterval;
 
 void motor_controller_setup() {
   pinMode(W_PWM1, OUTPUT);
@@ -14,35 +15,21 @@ void motor_controller_setup() {
   pinMode(W_DIR4, OUTPUT);
   driving = false;
   startMillis = 0;
+  driveInterval = 3000;
 }
 
 // drives in given direction at a given speed for given amount of time
 // returns boolean indicating whether or not we're still driving
-boolean drive_to_intersection(int direction, int speed, unsigned long time) {
+boolean drive_to_intersection(int direction, int speed) {
   if (!driving) {
     startMillis = millis();
     driving = true;
-    switch(direction) {
-    case FORWARD:
-      drive_forward(speed);
-      break;
-     case BACKWARD:
-      drive_backward(speed);
-      break;
-     case RIGHTWARD:
-      drive_right(speed);
-      break;
-     case LEFTWARD:
-      drive_left(speed);
-      break;
-     default: // shouldn't get here
-      stop_moving();
-    }
+    set_motors(direction, speed);
   }
   else {
     unsigned long currMillis = millis();
     // if we've been driving for long enough, stop
-    if (currMillis - startMillis > time) { 
+    if (currMillis - startMillis > driveInterval) { 
       driving = false;
     }
   }
@@ -133,3 +120,23 @@ void stop_moving() {
   analogWrite(W_PWM4, 0);
   digitalWrite(W_DIR4, HIGH);
 }
+
+void set_motors(int dir, int speed) {
+  switch(dir) {
+    case FORWARD:
+      drive_forward(speed);
+      break;
+     case BACKWARD:
+      drive_backward(speed);
+      break;
+     case RIGHTWARD:
+      drive_right(speed);
+      break;
+     case LEFTWARD:
+      drive_left(speed);
+      break;
+     default: // shouldn't get here
+      stop_moving();
+  }
+}
+

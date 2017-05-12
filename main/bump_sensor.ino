@@ -1,10 +1,12 @@
 // bump sensor functions defined here
-boolean bump_flag = false;
-boolean[4] bump_sensors;
+boolean bump_sensors[4];
 boolean retreating;
 int bump_count;
-
-void button_isr();
+unsigned long startRetreatMillis;
+const unsigned long retreatInterval = 750;
+boolean secondMove;
+int firstDir;
+int secondDir;
 
 void bump_sensor_setup() {
   pinMode(B_IN1, INPUT);
@@ -16,15 +18,47 @@ void bump_sensor_setup() {
   attachInterrupt(B_IN2, button_isr, FALLING); // interrrupt 1 is data ready
   attachInterrupt(B_IN3, button_isr, FALLING); // interrrupt 1 is data ready
   attachInterrupt(B_IN4, button_isr, FALLING); // interrrupt 1 is data ready
-  
   reset_bump_sensors();
   retreating = false;
+  bump_flag = false;
+}
+
+void button_isr() {
+  Serial.println("button_isr");
+  if (!bump_flag) {
+    for (int i = 0; i < 4; i++) {
+      bump_sensors[i] = true;
+    }
+    delayMicroseconds(30000);
+    for (int i=0; i<5; i++) {
+      for (int j = B_IN1; j < B_IN4+1; j++) {
+        bump_sensors[j-B_IN1] &= check_bump_sensor(j);  
+      }
+    }
+    for (int i = 0; i < 4; i++) {
+        //stop_moving();
+        //delay(1000*(j-B_IN1+1)*bump_sensors[j-B_IN1]);
+        bump_flag |= bump_sensors[i];
+    }
+    if (bump_flag) {
+      state = BUMPED;
+    }
+    Serial.println(bump_flag);
+    Serial.println(bump_sensors[0]);
+    Serial.println(bump_sensors[1]);
+    Serial.println(bump_sensors[2]);
+    Serial.println(bump_sensors[3]);
+  }
+  else {
+    state = BUMPED;
+  }
 }
 
 boolean check_bump_sensor(int pin) {
   return digitalRead(pin) == LOW;
 }
 
+// probably don't need this
 void update_bump_sensors() {
   bump_sensors[0] = check_bump_sensor(B_IN1);
   bump_sensors[1] = check_bump_sensor(B_IN2);
@@ -36,16 +70,18 @@ void reset_bump_sensors() {
   for (int i = 0; i < 4; i++) {
     bump_sensors[i] = false;
   }
-  bump_flag = false;
 }
 
+// probably don't need this
 boolean check_all_bump_sensors() {
   update_bump_sensors();
-  return bump_sensors[0] && bump_sensors[1] && bump_sensors[2] && bump_senors[3];
+  return bump_sensors[0] && bump_sensors[1] && bump_sensors[2] && bump_sensors[3];
 }
 
 boolean retreat_after_bump() {
   if (!retreating) {
+    startRetreatMillis = millis();
+    retreating = true;
     bump_count = 0;
     for (int i = 0; i < 4; i++) {
       if (bump_sensors[i])
@@ -54,47 +90,79 @@ boolean retreat_after_bump() {
     switch (bump_count) {
       case 1:
       {
+        Serial.println("In case 1");
+        if (bump_sensors[0]) {
+          firstDir = LEFTWARD;
+          secondDir = FORWARD;
+        }
+        else if (bump_sensors[1]) {
+          firstDir = LEFTWARD;
+          secondDir = BACKWARD;
+        }
+        else if (bump_sensors[2]) {
+          firstDir = RIGHTWARD;
+          secondDir = BACKWARD;
+        }
+        else if (bump_sensors[3]) {
+          firstDir = RIGHTWARD;
+          secondDir = FORWARD;
+        }
         break;
       }
       case 2:
       {
+        Serial.println("In case 2");
+        // set dir1 and dir 2 to be the same
+        if (bump_sensors[0] && bump_sensors[1]) {
+          firstDir = LEFTWARD;
+          secondDir = LEFTWARD;
+        }
+        else if (bump_sensors[1] && bump_sensors[2]) {
+          firstDir = BACKWARD;
+          secondDir = BACKWARD;
+        }
+        else if (bump_sensors[2] && bump_sensors[3]) {
+          firstDir = RIGHTWARD;
+          secondDir = RIGHTWARD;
+        }
+        else if (bump_sensors[3] && bump_sensors[0]) {
+          firstDir = FORWARD;
+          secondDir = FORWARD;
+        }
+        else {
+          // we're fucked. do nothing
+        }
         break;
       }
-      default: // this shouldn't happen. do nothing
+      default:
+      {
+        // this shouldn't happen. do nothing
+      }
     }
-    return true;
+    Serial.println("First direction: " + String(firstDir));
+    Serial.println("Second direction: " + String(secondDir));
+    // do first move
+    set_motors(firstDir, 80);
+    secondMove = false;
   }
   else {
-    return true;
+    unsigned long currRetreatMillis = millis();
+    // if we've been moving for long enough, stop
+    if (currRetreatMillis - startRetreatMillis > retreatInterval) {
+      if (!secondMove) {
+        // do second move
+        set_motors(secondDir, 80);
+        startRetreatMillis = millis();
+        secondMove = true;
+      }
+      else {
+        retreating = false;
+        return false;
+      }
+    }
   }
+  return true;
 }
 
-void button_isr() {
-  if (bump_flag == false) {
-    bump_sensors[0] = 1;
-    bump_sensors[1] = 1;
-    bump_sensors[2] = 1;
-    bump_sensors[3] = 1;
-    delayMicroseconds(30);
-    for (int i=0; i<5; i++) {
-      for (int j = B_IN1; j < B_IN4+1; j++) {
-        bump_sensors[j-B_IN1] &= check_bump_sensor(j);  
-      }
-      //delayMicroseconds(5);
-    }
-    for (int j = B_IN1; j < B_IN4+1; j++) {
-        stop_moving();
-        //delayMicroseconds(1000*(j-B_IN1+1)*bump_sensors[j-B_IN1]);
-        bump_flag |= bump_sensors[j-B_IN1];
-    }
-    if (bump_flag == true) {
-      state = BUMPED;
-    }
-    /*Serial.print(bump_flag);
-    Serial.print(bump_sensors[0]);
-    Serial.print(bump_sensors[1]);
-    Serial.print(bump_sensors[2]);
-    Serial.println(bump_sensors[3]);*/
-  }
-}
+
 

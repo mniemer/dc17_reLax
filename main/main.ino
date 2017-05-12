@@ -53,10 +53,12 @@ int state;
 int direction;
 int posx;
 int posy;
+boolean bump_flag;
 
 // setup functions here
 void setup() {
   // put your setup code here, to run once:
+  Serial.begin(9600);
   teensy_led(false);
   imu_sensor_setup();
   motor_controller_setup();
@@ -74,18 +76,13 @@ void loop() {
   run_laser();
   read_imu();
   
-  if (check_all_bump_sensors()) {
-    stop_moving();
-    state = BUMPED;
-  }
-  
   switch(state) {
     case DRIVING:
     {
       // drive until we get a signal that we've stopped, then switch to centering
       // speed/time arguements will need to be replaced with appropriate values
       // need to update posx and posy before centering
-      if (!drive_to_intersection(direction, 80, 3000)) {
+      if (!drive_to_intersection(direction, 80)) {
         stop_moving();
         state = ROTATING;
       }
@@ -109,6 +106,7 @@ void loop() {
     }
     case WAITING:
     {
+      teensy_led(false);
       // idle
       // check lasers, if we see adversary then move in appropriate direction
       int result = check_all_laser_sensors();
@@ -137,14 +135,18 @@ void loop() {
     {
       teensy_led(true);
       if (!retreat_after_bump()) {
+        bump_flag = false;
         stop_moving();
         reset_bump_sensors();
-        state = ROTATING;
+        state = WAITING; //CHANGE THIS TO ROTATING!
       }
+      break;
     }
     default: // shouldn't get here
       stop_moving();
   }
 }
+
+
 
 
