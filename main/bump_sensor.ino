@@ -15,16 +15,14 @@ void bump_sensor_setup() {
   pinMode(B_IN4, INPUT);
 
   attachInterrupt(B_IN1, button_isr, FALLING); // interrrupt 1 is data ready
-  attachInterrupt(B_IN2, button_isr, FALLING); // interrrupt 1 is data ready
-  attachInterrupt(B_IN3, button_isr, FALLING); // interrrupt 1 is data ready
-  attachInterrupt(B_IN4, button_isr, FALLING); // interrrupt 1 is data ready
+  attachInterrupt(B_IN2, button_isr, FALLING);
+  attachInterrupt(B_IN3, button_isr, FALLING);
+  attachInterrupt(B_IN4, button_isr, FALLING);
   reset_bump_sensors();
   retreating = false;
-  bump_flag = false;
 }
 
 void button_isr() {
-  Serial.println("button_isr");
   if (!bump_flag) {
     for (int i = 0; i < 4; i++) {
       bump_sensors[i] = true;
@@ -43,11 +41,6 @@ void button_isr() {
     if (bump_flag) {
       state = BUMPED;
     }
-    Serial.println(bump_flag);
-    Serial.println(bump_sensors[0]);
-    Serial.println(bump_sensors[1]);
-    Serial.println(bump_sensors[2]);
-    Serial.println(bump_sensors[3]);
   }
   else {
     state = BUMPED;
@@ -67,15 +60,10 @@ void update_bump_sensors() {
 }
 
 void reset_bump_sensors() {
+  bump_flag = false;
   for (int i = 0; i < 4; i++) {
     bump_sensors[i] = false;
   }
-}
-
-// probably don't need this
-boolean check_all_bump_sensors() {
-  update_bump_sensors();
-  return bump_sensors[0] && bump_sensors[1] && bump_sensors[2] && bump_sensors[3];
 }
 
 boolean retreat_after_bump() {
@@ -90,7 +78,6 @@ boolean retreat_after_bump() {
     switch (bump_count) {
       case 1:
       {
-        Serial.println("In case 1");
         if (bump_sensors[0]) {
           firstDir = LEFTWARD;
           secondDir = FORWARD;
@@ -111,7 +98,6 @@ boolean retreat_after_bump() {
       }
       case 2:
       {
-        Serial.println("In case 2");
         // set dir1 and dir 2 to be the same
         if (bump_sensors[0] && bump_sensors[1]) {
           firstDir = LEFTWARD;
@@ -130,7 +116,7 @@ boolean retreat_after_bump() {
           secondDir = FORWARD;
         }
         else {
-          // we're fucked. do nothing
+          // if this happens we're pretty much dead. do nothing
         }
         break;
       }
@@ -139,8 +125,6 @@ boolean retreat_after_bump() {
         // this shouldn't happen. do nothing
       }
     }
-    Serial.println("First direction: " + String(firstDir));
-    Serial.println("Second direction: " + String(secondDir));
     // do first move
     set_motors(firstDir, 80);
     secondMove = false;

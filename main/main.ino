@@ -114,17 +114,25 @@ void loop() {
         state = DRIVING;
         switch (result) {
         case L_IN1:
+        {
           direction = LEFTWARD;
           break;
+        }
         case L_IN2:
+        {
           direction = FORWARD;
           break;
+        }
         case L_IN3:
+        {
           direction = RIGHTWARD;
           break;
+        }
         case L_IN4:
+        {
           direction = BACKWARD;
           break;
+        }
         default: // this shouldn't happen
           direction = FORWARD;
         }
@@ -135,10 +143,9 @@ void loop() {
     {
       teensy_led(true);
       if (!retreat_after_bump()) {
-        bump_flag = false;
         stop_moving();
         reset_bump_sensors();
-        state = WAITING; //CHANGE THIS TO ROTATING!
+        state = ROTATING;
       }
       break;
     }
