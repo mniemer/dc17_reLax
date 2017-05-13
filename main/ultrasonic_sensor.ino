@@ -4,9 +4,10 @@ int bestIndex;
 boolean centering;
 const unsigned long centerInterval = 250;
 unsigned long startCenterMillis;
-const int lowerThreshold = 23;
-const int upperThreshold = 37;
+const int lowerThreshold = 26;
+const int upperThreshold = 40;
 boolean center_y_done;
+const int centerSpeed = 90;
 
 void ultrasonic_sensor_setup() {
   pinMode(U_ECHO1, INPUT);
@@ -26,7 +27,7 @@ int send_receive_ultrasonic(int id) {   // inputs 0-3
   digitalWrite(trig_pin, HIGH);
   delayMicroseconds(10);
   digitalWrite(trig_pin, LOW);
-  unsigned long distance = pulseIn(echo_pin, HIGH,8000);
+  unsigned long distance = pulseIn(echo_pin, HIGH,10000);
   int cm = distance/58;
   if (cm == 0)
     cm = 400;
@@ -49,7 +50,7 @@ boolean center_in_intersection() {
     //for (int j = 0; j < 5; j++) {
       for (int i = 0; i < 4; i++) {
         int dist = send_receive_ultrasonic(i);
-        //if (abs(dist-30) < abs(ultrasonic[i]-30))
+        //if (abs(dist-30) < abs(ultrasonic[i]-33))
           ultrasonic[i] = dist;
       //}
     }
@@ -60,12 +61,12 @@ boolean center_in_intersection() {
       if (ultrasonic[i] >= lowerThreshold && ultrasonic[i] <= upperThreshold)
         return false;
       if (abs(ultrasonic[i]-30) < min) {
-        min = abs(ultrasonic[i]-30);
+        min = abs(ultrasonic[i]-33);
         bestIndex = i;
       }
     }
 
-    center_x(bestIndex, (ultrasonic[bestIndex]-30) > 0);
+    center_x(bestIndex, (ultrasonic[bestIndex]-33) > 0);
     center_y_done = false;
   }
   else {
@@ -74,7 +75,7 @@ boolean center_in_intersection() {
     if (currCenterMillis - startCenterMillis > centerInterval) {
       if (!center_y_done) {
         stop_moving();
-        center_y(bestIndex, (ultrasonic[bestIndex]-30) > 0);
+        center_y(bestIndex, (ultrasonic[bestIndex]-33) > 0);
         startCenterMillis = millis();
         center_y_done = true;
       }
@@ -91,16 +92,16 @@ void center_y(int index, boolean tooFar) {
     case 0:
     case 3:
       if (tooFar)
-        drive_forward(80);
+        drive_forward(centerSpeed);
       else
-        drive_backward(80);
+        drive_backward(centerSpeed);
       break;
     case 1:
     case 2:
       if (tooFar)
-        drive_backward(80);
+        drive_backward(centerSpeed);
       else
-        drive_forward(80);
+        drive_forward(centerSpeed);
       break;
     default: // this shouldn't happen
       stop_moving();
@@ -112,16 +113,16 @@ void center_x(int index, boolean tooFar) {
     case 0:
     case 1:
       if (tooFar)
-        drive_left(80);
+        drive_left(centerSpeed);
       else
-        drive_right(80);
+        drive_right(centerSpeed);
       break;
     case 2:
     case 3:
       if (tooFar)
-        drive_right(80);
+        drive_right(centerSpeed);
       else
-        drive_left(80);
+        drive_left(centerSpeed);
       break;
     default: // this shouldn't happen
       stop_moving();

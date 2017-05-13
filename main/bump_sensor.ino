@@ -126,7 +126,7 @@ boolean retreat_after_bump() {
       }
     }
     // do first move
-    set_motors(firstDir, 80);
+    set_motors(firstDir, 100);
     secondMove = false;
   }
   else {
@@ -135,7 +135,7 @@ boolean retreat_after_bump() {
     if (currRetreatMillis - startRetreatMillis > retreatInterval) {
       if (!secondMove) {
         // do second move
-        set_motors(secondDir, 80);
+        set_motors(secondDir, 100);
         startRetreatMillis = millis();
         secondMove = true;
       }

@@ -15,7 +15,7 @@ void motor_controller_setup() {
   pinMode(W_DIR4, OUTPUT);
   driving = false;
   startMillis = 0;
-  driveInterval = 3000;
+  driveInterval = 2200;
 }
 
 // drives in given direction at a given speed for given amount of time
